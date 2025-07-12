@@ -1,91 +1,113 @@
 package com.applichat.doa;
 
-
-import com.applichat.exceptions.XMLException;
+import com.applichat.exceptions.NotificationException;
 import org.w3c.dom.*;
-
+import javax.xml.xpath.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationDAO {
+public class NotificationDAO extends XMLManager 
+{
 
-    private static final String NOTIFICATIONS_TAG = "notificationsRacine";
-    private static final String NOTIFICATION_TAG = "notification";
+    private static final String ELEMENT_NOTIFICATIONS = "notificationsRacine";
+    private static final String ELEMENT_NOTIFICATION = "notification";
+    protected Document document;
 
-    private final Document doc;
-
-    public NotificationDAO() {
-        this.doc = XMLManager.getDocument();
+    public NotificationDAO() 
+    {
+        super();
     }
 
-    /**
-     * Récupère toutes les notifications
-     */
-    public List<Element> getAllNotifications() {
-        List<Element> notifications = new ArrayList<>();
-        NodeList notifNodes = doc.getElementsByTagName(NOTIFICATION_TAG);
-        for (int i = 0; i < notifNodes.getLength(); i++) {
-            Node node = notifNodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                notifications.add((Element) node);
-            }
+    public void ajouterNotification(Element notification) 
+    {
+        Element racine = document.getDocumentElement();
+        NodeList listeNotif = racine.getElementsByTagName(ELEMENT_NOTIFICATIONS);
+
+        if (listeNotif.getLength() == 0) 
+        {
+            Element notifications = document.createElement(ELEMENT_NOTIFICATIONS);
+            notifications.appendChild(notification);
+            racine.appendChild(notifications);
+        } 
+        else 
+        {
+            listeNotif.item(0).appendChild(notification);
         }
-        return notifications;
+        saveXML();
     }
 
-    /**
-     * Recherche une notification par ID
-     */
-    public Element getNotificationById(String id) {
-        NodeList notifNodes = doc.getElementsByTagName(NOTIFICATION_TAG);
-        for (int i = 0; i < notifNodes.getLength(); i++) {
-            Element notif = (Element) notifNodes.item(i);
-            if (notif.getAttribute("id").equals(id)) {
-                return notif;
+    public void updateNotification(Element notificationMisAJour) 
+    {
+        String id = notificationMisAJour.getAttribute("id");
+        Element ancienne = getNotificationById(id);
+
+        if (ancienne != null) 
+        {
+            Node parent = ancienne.getParentNode();
+            parent.replaceChild(notificationMisAJour, ancienne);
+            saveXML();
+        } 
+        else 
+        {
+            throw new NotificationException("Notification introuvable avec l'id : " + id);
+        }
+    }
+
+    public void supprimerNotification(String id) 
+    {
+        Element notif = getNotificationById(id);
+        if (notif != null) {
+            Node parent = notif.getParentNode();
+            parent.removeChild(notif);
+            saveXML();
+        } 
+        else 
+        {
+            throw new NotificationException("Impossible de supprimer : notification introuvable avec l'id " + id);
+        }
+    }
+
+    public Element getNotificationById(String id) 
+    {
+        try 
+        {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expression = "//notification[@id='" + id + "']";
+            Node node = (Node) xpath.evaluate(expression, document, XPathConstants.NODE);
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) 
+            {
+                return (Element) node;
             }
+        } 
+        catch (XPathExpressionException e) 
+        {
+            throw new NotificationException("Erreur XPath pour getNotificationById", e);
         }
         return null;
     }
 
-    /**
-     * Ajoute une nouvelle notification
-     */
-    public void ajouterNotification(Element notification) {
-        Element racine = XMLManager.getRootElement();
-        Node notifNode = racine.getElementsByTagName(NOTIFICATIONS_TAG).item(0);
+    public List<Element> getNotificationsPourUtilisateur(String utilisateurId) 
+    {
+        List<Element> result = new ArrayList<>();
+        try 
+        {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expression = "//notification[@pour='" + utilisateurId + "']";
+            NodeList nodes = (NodeList) xpath.evaluate(expression, document, XPathConstants.NODESET);
 
-        if (notifNode == null) {
-            notifNode = doc.createElement(NOTIFICATIONS_TAG);
-            racine.appendChild(notifNode);
+            for (int i = 0; i < nodes.getLength(); i++) 
+            {
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) 
+                {
+                    result.add((Element) node);
+                }
+            }
+        } 
+        catch (XPathExpressionException e) 
+        {
+            throw new NotificationException("Erreur XPath pour getNotificationsPourUtilisateur", e);
         }
-
-        notifNode.appendChild(notification);
-        XMLManager.saveXML();
-    }
-
-    /**
-     * Supprime une notification
-     */
-    public void supprimerNotification(String id) {
-        Element notif = getNotificationById(id);
-        if (notif != null) {
-            notif.getParentNode().removeChild(notif);
-            XMLManager.saveXML();
-        } else {
-            throw new XMLException("Notification introuvable avec l'id : " + id);
-        }
-    }
-
-    /**
-     * Marque une notification comme lue
-     */
-    public void marquerCommeLue(String id) {
-        Element notif = getNotificationById(id);
-        if (notif != null) {
-            notif.setAttribute("lue", "true");
-            XMLManager.saveXML();
-        } else {
-            throw new XMLException("Impossible de marquer comme lue : notification non trouvée.");
-        }
+        return result;
     }
 }

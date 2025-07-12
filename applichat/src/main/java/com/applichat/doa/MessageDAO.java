@@ -1,92 +1,139 @@
 package com.applichat.doa;
 
 
-import com.applichat.exceptions.XMLException;
+import com.applichat.exceptions.MessageException;
 import org.w3c.dom.*;
-
+import javax.xml.xpath.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageDAO {
+public class MessageDAO extends XMLManager 
+{
 
-    private static final String MESSAGES_TAG = "messages";
-    private static final String MESSAGE_TAG = "message";
+    protected Document document;
+    private static final String ELEMENT_MESSAGES = "messages";
+    private static final String ELEMENT_MESSAGE = "message";
 
-    private final Document doc;
-
-    public MessageDAO() {
-        this.doc = XMLManager.getDocument();
+    public MessageDAO() 
+    {
+        super();
     }
 
-    /**
-     * Récupérer tous les messages
-     */
-    public List<Element> getAllMessages() {
-        List<Element> messages = new ArrayList<>();
-        NodeList msgNodes = doc.getElementsByTagName(MESSAGE_TAG);
-        for (int i = 0; i < msgNodes.getLength(); i++) {
-            Node node = msgNodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                messages.add((Element) node);
-            }
+    public void ajouterMessage(Element nouveauMessage) 
+    {
+        Element racine = document.getDocumentElement();
+        NodeList messagesList = racine.getElementsByTagName(ELEMENT_MESSAGES);
+
+        if (messagesList.getLength() == 0) 
+        {
+            Element messages = document.createElement(ELEMENT_MESSAGES);
+            racine.appendChild(messages);
+            messages.appendChild(nouveauMessage);
+        } 
+        else 
+        {
+            messagesList.item(0).appendChild(nouveauMessage);
         }
-        return messages;
+        saveXML();
     }
 
-    /**
-     * Rechercher un message par ID
-     */
-    public Element getMessageById(String id) {
-        NodeList msgNodes = doc.getElementsByTagName(MESSAGE_TAG);
-        for (int i = 0; i < msgNodes.getLength(); i++) {
-            Element msg = (Element) msgNodes.item(i);
-            if (msg.getAttribute("id").equals(id)) {
-                return msg;
+    public void updateMessage(Element messageMisAJour) 
+    {
+        String id = messageMisAJour.getAttribute("id");
+        Element ancienMessage = getMessageById(id);
+
+        if (ancienMessage != null) 
+        {
+            Node parent = ancienMessage.getParentNode();
+            parent.replaceChild(messageMisAJour, ancienMessage);
+            saveXML();
+        } 
+        else 
+        {
+            throw new MessageException("Impossible de modifier : message introuvable avec l'id " + id);
+        }
+    }
+
+    public void supprimerMessage(String id) 
+    {
+        Element message = getMessageById(id);
+        if (message != null) 
+        {
+            Node parent = message.getParentNode();
+            parent.removeChild(message);
+            saveXML();
+        } else 
+        {
+            throw new MessageException("Impossible de supprimer : message introuvable avec l'id " + id);
+        }
+    }
+
+    public Element getMessageById(String id) 
+    {
+        try 
+        {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expression = "//message[@id='" + id + "']";
+            Node node = (Node) xpath.evaluate(expression, document, XPathConstants.NODE);
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) 
+            {
+                return (Element) node;
             }
+        } 
+        catch (XPathExpressionException e) 
+        {
+            throw new MessageException("Erreur XPath lors de la recherche du message avec id " + id, e);
         }
         return null;
     }
 
-    /**
-     * Ajouter un message
-     */
-    public void ajouterMessage(Element message) {
-        Element racine = XMLManager.getRootElement();
-        Node messagesNode = racine.getElementsByTagName(MESSAGES_TAG).item(0);
+    public List<Element> getMessagesConversation(String deId, String aId) 
+    {
+        List<Element> result = new ArrayList<>();
+        try 
+        {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expr = "//message[@de='" + deId + "' and @a='" + aId + "'] | //message[@de='" + aId + "' and @a='" + deId + "']";
+            NodeList nodes = (NodeList) xpath.evaluate(expr, document, XPathConstants.NODESET);
 
-        if (messagesNode == null) {
-            messagesNode = doc.createElement(MESSAGES_TAG);
-            racine.appendChild(messagesNode);
+            for (int i = 0; i < nodes.getLength(); i++) 
+            {
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) 
+                {
+                    result.add((Element) node);
+                }
+            }
+        } 
+        catch (XPathExpressionException e) 
+        {
+            throw new MessageException("Erreur XPath lors de la récupération des messages de conversation", e);
         }
-
-        messagesNode.appendChild(message);
-        XMLManager.saveXML();
+        return result;
     }
 
-    /**
-     * Supprimer un message
-     */
-    public void supprimerMessage(String id) {
-        Element message = getMessageById(id);
-        if (message != null) {
-            message.getParentNode().removeChild(message);
-            XMLManager.saveXML();
-        } else {
-            throw new XMLException("Message introuvable avec l'id : " + id);
-        }
-    }
+    public List<Element> getMessagesParUtilisateur(String utilisateurId) 
+    {
+        List<Element> result = new ArrayList<>();
+        try 
+        {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            String expr = "//message[@de='" + utilisateurId + "']";
+            NodeList nodes = (NodeList) xpath.evaluate(expr, document, XPathConstants.NODESET);
 
-    /**
-     * Modifier un message existant
-     */
-    public void modifierMessage(String id, Element nouveauMessage) {
-        Element ancien = getMessageById(id);
-        if (ancien != null) {
-            Node parent = ancien.getParentNode();
-            parent.replaceChild(nouveauMessage, ancien);
-            XMLManager.saveXML();
-        } else {
-            throw new XMLException("Impossible de modifier : message introuvable avec l'id " + id);
+            for (int i = 0; i < nodes.getLength(); i++) 
+            {
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) 
+                {
+                    result.add((Element) node);
+                }
+            }
+        } 
+        catch (XPathExpressionException e) 
+        {
+            throw new MessageException("Erreur XPath lors de la récupération des messages par utilisateur", e);
         }
+        return result;
     }
 }
