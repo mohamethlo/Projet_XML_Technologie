@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE appliChat SYSTEM "applichat.dtd">
+
+<appliChat xmlns="http://exemple.com/chat"
+           xmlns:cfg="http://exemple.com/chat/config"
+           xmlns:crdt="http://exemple.com/chat/crdt"
+           xmlns:evt="http://exemple.com/chat/evenements"
+           xmlns:mod="http://exemple.com/chat/modules"
+           genereLe="2025-07-11T16:00:00Z"
+           version="3.0">
+ 
+    <!-- 1. Environnements & Flags de fonctionnalités -->
+      
+    <cfg:environnements>
+            
+        <cfg:env nom="developpement">
+                  
+            <cfg:endpointAPI>http://localhost:8000/api</cfg:endpointAPI>
+                  
+            <cfg:flagsFonctionnalites>
+                        
+                <cfg:flag active="true" nom="nouvelleUI"/>
+                        
+                <cfg:flag active="false" nom="appelVocal"/>
+                      
+            </cfg:flagsFonctionnalites>
+                
+        </cfg:env>
+            
+        <cfg:env nom="production">
+                  
+            <cfg:endpointAPI>https://chat.exemple.com/api</cfg:endpointAPI>
+                  
+            <cfg:flagsFonctionnalites>
+                        
+                <cfg:flag active="false" nom="nouvelleUI"/>
+                        
+                <cfg:flag active="true" nom="appelVocal"/>
+                      
+            </cfg:flagsFonctionnalites>
+                
+        </cfg:env>
+          
+    </cfg:environnements>
+      
+    <!-- 2. Utilisateurs -->
+      
+    <utilisateurs>
+            
+        <utilisateur cfg:env="production" id="U100">
+                  
+            <identifiants>
+                        
+                <login>fatou.ndiaye</login>
+                        
+                <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH…</motDePasse>
+                        
+                <authentification2FA active="true" methode="sms"/>
+                      
+            </identifiants>
+                  
+            <profil>
+                        
+                <nom>Fatou Ndiaye</nom>
+                        
+                <photo>/images/U100.jpg</photo>
+                        
+                <bio>Étudiante L3 Cybersécurité</bio>
+                        
+                <languePreferee>fr</languePreferee>
+                        
+                <languesDisponibles>
+                              
+                    <langue code="fr"/>
+                              
+                    <langue code="wo"/>
+                              
+                    <langue code="en"/>
+                            
+                </languesDisponibles>
+                        
+                <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+                        
+                <statut derniereConnexion="2025-07-11T15:45:00Z">active</statut>
+                      
+            </profil>
+                  
+            <preferences>
+                        
+                <apparence>
+                              
+                    <theme>sombre</theme>
+                              
+                    <police famille="Arial" taille="moyenne"/>
+                              
+                    <animations active="false"/>
+                            
+                </apparence>
+                        
+                <accessibilite>
+                              
+                    <syntheseVocale active="true"/>
+                              
+                    <hautContraste active="true"/>
+                              
+                    <navigationClavier active="true"/>
+                            
+                </accessibilite>
+                        
+                <notifications>
+                              
+                    <global active="true"/>
+                              
+                    <horaireSilence debut="22:00" fin="06:00"/>
+                              
+                    <son volume="80"/>
+                              
+                    <vibration modele="court"/>
+                              
+                    <popup active="true" duree="5s"/>
+                            
+                </notifications>
+                        
+                <securite>
+                              
+                    <deconnexionAuto delai="15m"/>
+                              
+                    <codePIN essaisMax="3" longueur="6"/>
+                              
+                    <biometrie active="true"/>
+                              
+                    <chiffrementLocal active="true" algo="AES-256"/>
+                            
+                </securite>
+                        
+                <stockage>
+                              
+                    <limiteMo>1024</limiteMo>
+                              
+                    <nettoyageAuto plusVieuxQue="90j"/>
+                              
+                    <compressionMedia methode="gzip"/>
+                            
+                </stockage>
+                        
+                <connectivite>
+                              
+                    <modeHorsLigne active="true"/>
+                              
+                    <reseauxPreferes>
+                                    
+                        <reseau priorite="1" type="WiFi"/>
+                                    
+                        <reseau priorite="2" type="4G"/>
+                                    
+                        <reseau priorite="3" type="2G"/>
+                                  
+                    </reseauxPreferes>
+                              
+                    <modeEconomieDonnees active="true"/>
+                            
+                </connectivite>
+                        
+                <parametresIA>
+                              
+                    <reponsesIntelligentes active="true"/>
+                              
+                    <analyseSentiment active="true"/>
+                              
+                    <traductionAuto active="true" cible="wo"/>
+                              
+                    <reconnaissanceVocale accent="senegalais"/>
+                            
+                </parametresIA>
+                      
+            </preferences>
+                  
+            <journalActivite>
+                        
+                <entree detail="WiFi ESP" horodatage="2025-07-10T18:00:00Z" type="connexion"/>
+                        
+                <entree horodatage="2025-07-10T20:15:00Z" message="M123" type="messageEnvoye"/>
+                      
+            </journalActivite>
+                
+        </utilisateur>
+            
+        <!-- Ajout des utilisateurs U101 et U102 référencés -->
+            
+        <utilisateur id="U101">
+                  
+            <identifiants>
+                        
+                <login>user.101</login>
+                        
+                <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH2…</motDePasse>
+                      
+            </identifiants>
+                  
+            <profil>
+                        
+                <nom>Utilisateur 101</nom>
+                        
+                <photo>/images/U101.jpg</photo>
+                        
+                <languePreferee>fr</languePreferee>
+                        
+                <languesDisponibles>
+                              
+                    <langue code="fr"/>
+                            
+                </languesDisponibles>
+                        
+                <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+                        
+                <statut derniereConnexion="2025-07-11T14:00:00Z">active</statut>
+                      
+            </profil>
+                  
+            <preferences>
+                        
+                <apparence>
+                              
+                    <theme>clair</theme>
+                              
+                    <police famille="Arial" taille="moyenne"/>
+                              
+                    <animations active="true"/>
+                            
+                </apparence>
+                        
+                <accessibilite>
+                              
+                    <syntheseVocale active="false"/>
+                              
+                    <hautContraste active="false"/>
+                              
+                    <navigationClavier active="false"/>
+                            
+                </accessibilite>
+                        
+                <notifications>
+                              
+                    <global active="true"/>
+                            
+                </notifications>
+                        
+                <securite>
+                              
+                    <deconnexionAuto delai="30m"/>
+                            
+                </securite>
+                        
+                <stockage>
+                              
+                    <limiteMo>512</limiteMo>
+                            
+                </stockage>
+                        
+                <connectivite>
+                              
+                    <reseauxPreferes>
+                                    
+                        <reseau priorite="1" type="WiFi"/>
+                                  
+                    </reseauxPreferes>
+                            
+                </connectivite>
+                        
+                <parametresIA>
+                              
+                    <reponsesIntelligentes active="false"/>
+                            
+                </parametresIA>
+                      
+            </preferences>
+                
+        </utilisateur>
+            
+        <utilisateur id="U102">
+                  
+            <identifiants>
+                        
+                <login>user.102</login>
+                        
+                <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH3…</motDePasse>
+                      
+            </identifiants>
+                  
+            <profil>
+                        
+                <nom>Utilisateur 102</nom>
+                        
+                <photo>/images/U102.jpg</photo>
+                        
+                <languePreferee>fr</languePreferee>
+                        
+                <languesDisponibles>
+                              
+                    <langue code="fr"/>
+                            
+                </languesDisponibles>
+                        
+                <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+                        
+                <statut derniereConnexion="2025-07-11T13:00:00Z">active</statut>
+                      
+            </profil>
+                  
+            <preferences>
+                        
+                <apparence>
+                              
+                    <theme>clair</theme>
+                              
+                    <police famille="Arial" taille="moyenne"/>
+                              
+                    <animations active="true"/>
+                            
+                </apparence>
+                        
+                <accessibilite>
+                              
+                    <syntheseVocale active="false"/>
+                              
+                    <hautContraste active="false"/>
+                              
+                    <navigationClavier active="false"/>
+                            
+                </accessibilite>
+                        
+                <notifications>
+                              
+                    <global active="true"/>
+                            
+                </notifications>
+                        
+                <securite>
+                              
+                    <deconnexionAuto delai="30m"/>
+                            
+                </securite>
+                        
+                <stockage>
+                              
+                    <limiteMo>512</limiteMo>
+                            
+                </stockage>
+                        
+                <connectivite>
+                              
+                    <reseauxPreferes>
+                                    
+                        <reseau priorite="1" type="WiFi"/>
+                                  
+                    </reseauxPreferes>
+                            
+                </connectivite>
+                        
+                <parametresIA>
+                              
+                    <reponsesIntelligentes active="false"/>
+                            
+                </parametresIA>
+                      
+            </preferences>
+                
+        </utilisateur>
+          
+        <utilisateur id="u999">
+            <identifiants>
+                <login>mohameth</login>
+                <motDePasse algoHash="plain">1234</motDePasse>
+            </identifiants>
+            <profil>
+                <nom>Mohameth LO</nom>
+                <photo/>
+                <languePreferee/>
+                <languesDisponibles/>
+                <fuseauHoraire/>
+                <statut derniereConnexion="2025-07-12T07:00:00">En ligne</statut>
+            </profil>
+            <preferences/>
+        </utilisateur>
+    </utilisateurs>
+      
+    <!-- 3. Contacts -->
+      
+    <contacts>
+            
+        <contact avec="U101" depuis="2025-06-15" favori="true" id="C001" utilisateur="U100"/>
+            
+        <contact avec="U102" depuis="2025-07-01" id="C002" utilisateur="U100"/>
+          
+    </contacts>
+      
+    <!-- 4. Groupes -->
+      
+    <groupes>
+            
+        <groupe id="G101">
+                  
+            <meta>
+                        
+                <nom>Projet IA Hackathon</nom>
+                        
+                <photo>/groups/G101.png</photo>
+                        
+                <type>prive</type>
+                        
+                <creePar date="2025-05-20" utilisateur="U100"/>
+                        
+                <description>Groupe de travail IA SENELEC 2025</description>
+                      
+            </meta>
+                  
+            <parametres>
+                        
+                <politiqueInvit invitationsPar="adminSeul"/>
+                        
+                <retentionHistorique jours="180"/>
+                        
+                <traductionAuto active="false" cible="fr"/>
+                        
+                <chiffrement finAFin="true"/>
+                        
+                <tailleMaxMembres>50</tailleMaxMembres>
+                        
+                <modeRapide intervalle="30s"/>
+                      
+            </parametres>
+                  
+            <membres>
+                        
+                <membre rejoint="2025-05-20" role="admin" utilisateur="U100"/>
+                        
+                <membre rejoint="2025-05-21" role="membre" utilisateur="U101"/>
+                      
+            </membres>
+                
+        </groupe>
+          
+    </groupes>
+      
+    <!-- 5. Messages -->
+      
+    <messages>
+            
+        <message a="U101" de="U100" horodatage="2025-07-11T12:00:00Z" id="M501" statut="livré">
+                  
+            <contenu type="texte">
+                        
+                <texte>As‑tu vu le rapport final ?</texte>
+                        
+                <formatage gras="true" italique="false"/>
+                      
+            </contenu>
+                  
+            <options>
+                        
+                <priorite niveau="élevée"/>
+                        
+                <ephemere duree="24h"/>
+                        
+                <accuseLecture demande="true"/>
+                        
+                <reactionsPossible types="toutes"/>
+                        
+                <transfert autorise="false"/>
+                      
+            </options>
+                  
+            <securiteMessage>
+                        
+                <filigrane actif="true"/>
+                        
+                <signature algo="RSA-SHA256">BASE64SIG…</signature>
+                      
+            </securiteMessage>
+                
+        </message>
+            
+        <message aGroupe="G101" de="U101" horodatage="2025-07-11T12:05:00Z" id="M502" statut="lu">
+                  
+            <contenu type="fichier">
+                        
+                <fichier mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" nom="resultats.xlsx" tailleKo="256"/>
+                      
+            </contenu>
+                  
+            <options>
+                        
+                <analyseVirus effectue="true" resultat="propre"/>
+                        
+                <ouvertureAutoInvite active="false"/>
+                      
+            </options>
+                  
+            <statistiques>
+                        
+                <telechargements>3</telechargements>
+                      
+            </statistiques>
+                
+        </message>
+            
+        <message a="U100" de="U102" horodatage="2025-07-11T12:10:00Z" id="M503" statut="envoyé">
+                  
+            <contenu type="audio">
+                        
+                <audio duree="12s" source="/media/U102/audio001.ogg"/>
+                        
+                <transcription lang="fr">Je suis en route.</transcription>
+                      
+            </contenu>
+                  
+            <ameliorementsIA>
+                        
+                <reductionBruit appliquee="true"/>
+                        
+                <emotionDetectee>neutre</emotionDetectee>
+                      
+            </ameliorementsIA>
+                
+        </message>
+            
+        <!-- Ajout du message M123 référencé -->
+            
+        <message a="U101" de="U100" horodatage="2025-07-10T20:15:00Z" id="M123" statut="lu">
+                  
+            <contenu type="texte">
+                        
+                <texte>Message de test</texte>
+                      
+            </contenu>
+                
+        </message>
+          
+    </messages>
+      
+    <!-- 6. Notifications -->
+      
+    <notificationsRacine>
+            
+        <notification date="2025-07-11T12:00:10Z" declencheur="M501" id="N1001" lue="false" pour="U100" type="message">
+                  
+            <contenuNotification>Fatou vous a envoyé un message.</contenuNotification>
+                  
+            <action onClick="ouvrirDiscussion('U100','U101')"/>
+                
+        </notification>
+          
+    </notificationsRacine>
+      
+    <!-- 7. Plugins & Modules -->
+      
+    <mod:plugins>
+            
+        <mod:plugin active="true" nom="voixVideo">
+                  
+            <mod:configuration>
+                        
+                <mod:serveursICE>
+                              
+                    <mod:serveur url="stun:stun1.exemple.com"/>
+                              
+                    <mod:serveur motDePasse="pass" url="turn:turn.exemple.com" utilisateur="user"/>
+                            
+                </mod:serveursICE>
+                        
+                <mod:codecVideo>VP8</mod:codecVideo>
+                      
+            </mod:configuration>
+                
+        </mod:plugin>
+            
+        <mod:plugin active="true" nom="repondeurAuto">
+                  
+            <mod:regles>
+                        
+                <mod:regle id="R1">
+                              
+                    <mod:quand>rapport</mod:quand>
+                              
+                    <mod:reponse>Je vérifie et reviens vers toi.</mod:reponse>
+                              
+                    <mod:delai>2h</mod:delai>
+                            
+                </mod:regle>
+                      
+            </mod:regles>
+                
+        </mod:plugin>
+          
+    </mod:plugins>
+      
+    <!-- 8. Bus d'événements -->
+      
+    <evt:busEvenements>
+            
+        <evt:canal gestionnaire="surNouveauMessage" nom="message.nouveau"/>
+            
+        <evt:canal gestionnaire="journalConnexion" nom="utilisateur.connexion"/>
+          
+    </evt:busEvenements>
+      
+    <!-- 9. États CRDT -->
+      
+    <crdt:documents>
+            
+        <crdt:document id="docU100">
+                  
+            <crdt:type>RGA</crdt:type>
+                  
+            <crdt:etat>ETATBASE64…</crdt:etat>
+                
+        </crdt:document>
+          
+    </crdt:documents>
+      
+    <!-- 10. Observabilité -->
+      
+    <observabilite>
+            
+        <metriques>
+                  
+            <metrique nom="messages_envoyes" type="compteur"/>
+                  
+            <metrique nom="sessions_actives" type="jauge"/>
+                
+        </metriques>
+            
+        <traces>
+                  
+            <endpointTrace>http://jaeger.local:14268/api/traces</endpointTrace>
+                  
+            <echantillonnage taux="0.1"/>
+                
+        </traces>
+            
+        <journalisation format="json" niveau="DEBUG"/>
+          
+    </observabilite>
+      
+    <!-- 11. Pipeline CI/CD -->
+      
+    <pipeline>
+            
+        <ci>
+                  
+            <etape commande="npm run lint" nom="analyse"/>
+                  
+            <etape commande="npm test" nom="tests"/>
+                  
+            <etape commande="npm run build" nom="construction"/>
+                  
+            <etape commande="mvn package" nom="package"/>
+                
+        </ci>
+            
+        <cd>
+                  
+            <deploiement environnement="production" strategie="blue-green"/>
+                
+        </cd>
+          
+    </pipeline>
+      
+    <!-- 12. Configuration Système Globale -->
+      
+    <configurationSysteme>
+            
+        <infoAppli>
+                  
+            <nom>ChatXML Pro</nom>
+                  
+            <version>3.0</version>
+                  
+            <dateCompilation>2025-07-11</dateCompilation>
+                
+        </infoAppli>
+            
+        <performance>
+                  
+            <threadsMax>10</threadsMax>
+                  
+            <cache active="true" dureeVie="300s"/>
+                  
+            <niveauJournal>INFO</niveauJournal>
+                
+        </performance>
+            
+        <sauvegarde>
+                  
+            <planning incrementale="true" quotidienne="02:00"/>
+                  
+            <conservation jours="30"/>
+                  
+            <emplacement>/sauvegardes/</emplacement>
+                  
+            <chiffrementSauvegarde active="true"/>
+                
+        </sauvegarde>
+            
+        <conformite>
+                  
+            <rgpdCompliant>true</rgpdCompliant>
+                  
+            <traceAudit active="true"/>
+                
+        </conformite>
+          
+    </configurationSysteme>
+    
+</appliChat>
