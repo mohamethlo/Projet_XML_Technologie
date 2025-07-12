@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appliChat SYSTEM "applichat.dtd">
+<appliChat xmlns="http://exemple.com/chat"
+           xmlns:cfg="http://exemple.com/chat/config"
+           xmlns:mod="http://exemple.com/chat/modules"
+           xmlns:evt="http://exemple.com/chat/evenements"
+           xmlns:crdt="http://exemple.com/chat/crdt"
+           version="3.0"
+           genereLe="2025-07-11T16:00:00Z">
+
+  <!-- 1. Environnements & Flags de fonctionnalités -->
+  <cfg:environnements>
+    <cfg:env nom="developpement">
+      <cfg:endpointAPI>http://localhost:8000/api</cfg:endpointAPI>
+      <cfg:flagsFonctionnalites>
+        <cfg:flag nom="nouvelleUI" active="true"/>
+        <cfg:flag nom="appelVocal" active="false"/>
+      </cfg:flagsFonctionnalites>
+    </cfg:env>
+    <cfg:env nom="production">
+      <cfg:endpointAPI>https://chat.exemple.com/api</cfg:endpointAPI>
+      <cfg:flagsFonctionnalites>
+        <cfg:flag nom="nouvelleUI" active="false"/>
+        <cfg:flag nom="appelVocal" active="true"/>
+      </cfg:flagsFonctionnalites>
+    </cfg:env>
+  </cfg:environnements>
+
+  <!-- 2. Utilisateurs -->
+  <utilisateurs>
+    <utilisateur id="U100" cfg:env="production">
+      <identifiants>
+        <login>fatou.ndiaye</login>
+        <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH…</motDePasse>
+        <authentification2FA methode="sms" active="true"/>
+      </identifiants>
+      <profil>
+        <nom>Fatou Ndiaye</nom>
+        <photo>/images/U100.jpg</photo>
+        <bio>Étudiante L3 Cybersécurité</bio>
+        <languePreferee>fr</languePreferee>
+        <languesDisponibles>
+          <langue code="fr"/>
+          <langue code="wo"/>
+          <langue code="en"/>
+        </languesDisponibles>
+        <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+        <statut derniereConnexion="2025-07-11T15:45:00Z">active</statut>
+      </profil>
+      <preferences>
+        <apparence>
+          <theme>sombre</theme>
+          <police taille="moyenne" famille="Arial"/>
+          <animations active="false"/>
+        </apparence>
+        <accessibilite>
+          <syntheseVocale active="true"/>
+          <hautContraste active="true"/>
+          <navigationClavier active="true"/>
+        </accessibilite>
+        <notifications>
+          <global active="true"/>
+          <horaireSilence debut="22:00" fin="06:00"/>
+          <son volume="80"/>
+          <vibration modele="court"/>
+          <popup duree="5s" active="true"/>
+        </notifications>
+        <securite>
+          <deconnexionAuto delai="15m"/>
+          <codePIN longueur="6" essaisMax="3"/>
+          <biometrie active="true"/>
+          <chiffrementLocal algo="AES-256" active="true"/>
+        </securite>
+        <stockage>
+          <limiteMo>1024</limiteMo>
+          <nettoyageAuto plusVieuxQue="90j"/>
+          <compressionMedia methode="gzip"/>
+        </stockage>
+        <connectivite>
+          <modeHorsLigne active="true"/>
+          <reseauxPreferes>
+            <reseau type="WiFi" priorite="1"/>
+            <reseau type="4G" priorite="2"/>
+            <reseau type="2G" priorite="3"/>
+          </reseauxPreferes>
+          <modeEconomieDonnees active="true"/>
+        </connectivite>
+        <parametresIA>
+          <reponsesIntelligentes active="true"/>
+          <analyseSentiment active="true"/>
+          <traductionAuto cible="wo" active="true"/>
+          <reconnaissanceVocale accent="senegalais"/>
+        </parametresIA>
+      </preferences>
+      <journalActivite>
+        <entree horodatage="2025-07-10T18:00:00Z" type="connexion" detail="WiFi ESP"/>
+        <entree horodatage="2025-07-10T20:15:00Z" type="messageEnvoye" message="M123"/>
+      </journalActivite>
+    </utilisateur>
+    <!-- Ajout des utilisateurs U101 et U102 référencés -->
+    <utilisateur id="U101">
+      <identifiants>
+        <login>user.101</login>
+        <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH2…</motDePasse>
+      </identifiants>
+      <profil>
+        <nom>Utilisateur 101</nom>
+        <photo>/images/U101.jpg</photo>
+        <languePreferee>fr</languePreferee>
+        <languesDisponibles>
+          <langue code="fr"/>
+        </languesDisponibles>
+        <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+        <statut derniereConnexion="2025-07-11T14:00:00Z">active</statut>
+      </profil>
+      <preferences>
+        <apparence>
+          <theme>clair</theme>
+          <police taille="moyenne" famille="Arial"/>
+          <animations active="true"/>
+        </apparence>
+        <accessibilite>
+          <syntheseVocale active="false"/>
+          <hautContraste active="false"/>
+          <navigationClavier active="false"/>
+        </accessibilite>
+        <notifications>
+          <global active="true"/>
+        </notifications>
+        <securite>
+          <deconnexionAuto delai="30m"/>
+        </securite>
+        <stockage>
+          <limiteMo>512</limiteMo>
+        </stockage>
+        <connectivite>
+          <reseauxPreferes>
+            <reseau type="WiFi" priorite="1"/>
+          </reseauxPreferes>
+        </connectivite>
+        <parametresIA>
+          <reponsesIntelligentes active="false"/>
+        </parametresIA>
+      </preferences>
+    </utilisateur>
+    <utilisateur id="U102">
+      <identifiants>
+        <login>user.102</login>
+        <motDePasse algoHash="bcrypt">$2a$12$EXEMPLEHASH3…</motDePasse>
+      </identifiants>
+      <profil>
+        <nom>Utilisateur 102</nom>
+        <photo>/images/U102.jpg</photo>
+        <languePreferee>fr</languePreferee>
+        <languesDisponibles>
+          <langue code="fr"/>
+        </languesDisponibles>
+        <fuseauHoraire>Africa/Dakar</fuseauHoraire>
+        <statut derniereConnexion="2025-07-11T13:00:00Z">active</statut>
+      </profil>
+      <preferences>
+        <apparence>
+          <theme>clair</theme>
+          <police taille="moyenne" famille="Arial"/>
+          <animations active="true"/>
+        </apparence>
+        <accessibilite>
+          <syntheseVocale active="false"/>
+          <hautContraste active="false"/>
+          <navigationClavier active="false"/>
+        </accessibilite>
+        <notifications>
+          <global active="true"/>
+        </notifications>
+        <securite>
+          <deconnexionAuto delai="30m"/>
+        </securite>
+        <stockage>
+          <limiteMo>512</limiteMo>
+        </stockage>
+        <connectivite>
+          <reseauxPreferes>
+            <reseau type="WiFi" priorite="1"/>
+          </reseauxPreferes>
+        </connectivite>
+        <parametresIA>
+          <reponsesIntelligentes active="false"/>
+        </parametresIA>
+      </preferences>
+    </utilisateur>
+  </utilisateurs>
+
+  <!-- 3. Contacts -->
+  <contacts>
+    <contact id="C001" utilisateur="U100" avec="U101" depuis="2025-06-15" favori="true"/>
+    <contact id="C002" utilisateur="U100" avec="U102" depuis="2025-07-01"/>
+  </contacts>
+
+  <!-- 4. Groupes -->
+  <groupes>
+    <groupe id="G101">
+      <meta>
+        <nom>Projet IA Hackathon</nom>
+        <photo>/groups/G101.png</photo>
+        <type>prive</type>
+        <creePar utilisateur="U100" date="2025-05-20"/>
+        <description>Groupe de travail IA SENELEC 2025</description>
+      </meta>
+      <parametres>
+        <politiqueInvit invitationsPar="adminSeul"/>
+        <retentionHistorique jours="180"/>
+        <traductionAuto cible="fr" active="false"/>
+        <chiffrement finAFin="true"/>
+        <tailleMaxMembres>50</tailleMaxMembres>
+        <modeRapide intervalle="30s"/>
+      </parametres>
+      <membres>
+        <membre utilisateur="U100" role="admin" rejoint="2025-05-20"/>
+        <membre utilisateur="U101" role="membre" rejoint="2025-05-21"/>
+      </membres>
+    </groupe>
+  </groupes>
+
+  <!-- 5. Messages -->
+  <messages>
+    <message id="M501" de="U100" a="U101" horodatage="2025-07-11T12:00:00Z" statut="livré">
+      <contenu type="texte">
+        <texte>As‑tu vu le rapport final ?</texte>
+        <formatage gras="true" italique="false"/>
+      </contenu>
+      <options>
+        <priorite niveau="élevée"/>
+        <ephemere duree="24h"/>
+        <accuseLecture demande="true"/>
+        <reactionsPossible types="toutes"/>
+        <transfert autorise="false"/>
+      </options>
+      <securiteMessage>
+        <filigrane actif="true"/>
+        <signature algo="RSA-SHA256">BASE64SIG…</signature>
+      </securiteMessage>
+    </message>
+
+    <message id="M502" de="U101" aGroupe="G101" horodatage="2025-07-11T12:05:00Z" statut="lu">
+      <contenu type="fichier">
+        <fichier nom="resultats.xlsx"
+                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                 tailleKo="256"/>
+      </contenu>
+      <options>
+        <analyseVirus effectue="true" resultat="propre"/>
+        <ouvertureAutoInvite active="false"/>
+      </options>
+      <statistiques>
+        <telechargements>3</telechargements>
+      </statistiques>
+    </message>
+
+    <message id="M503" de="U102" a="U100" horodatage="2025-07-11T12:10:00Z" statut="envoyé">
+      <contenu type="audio">
+        <audio source="/media/U102/audio001.ogg" duree="12s"/>
+        <transcription lang="fr">Je suis en route.</transcription>
+      </contenu>
+      <ameliorementsIA>
+        <reductionBruit appliquee="true"/>
+        <emotionDetectee>neutre</emotionDetectee>
+      </ameliorementsIA>
+    </message>
+
+    <!-- Ajout du message M123 référencé -->
+    <message id="M123" de="U100" a="U101" horodatage="2025-07-10T20:15:00Z" statut="lu">
+      <contenu type="texte">
+        <texte>Message de test</texte>
+      </contenu>
+    </message>
+  </messages>
+
+  <!-- 6. Notifications -->
+  <notificationsRacine>
+    <notification id="N1001" pour="U100" declencheur="M501" type="message" date="2025-07-11T12:00:10Z" lue="false">
+      <contenuNotification>Fatou vous a envoyé un message.</contenuNotification>
+      <action onClick="ouvrirDiscussion('U100','U101')"/>
+    </notification>
+  </notificationsRacine>
+
+  <!-- 7. Plugins & Modules -->
+  <mod:plugins>
+    <mod:plugin nom="voixVideo" active="true">
+      <mod:configuration>
+        <mod:serveursICE>
+          <mod:serveur url="stun:stun1.exemple.com"/>
+          <mod:serveur url="turn:turn.exemple.com" utilisateur="user" motDePasse="pass"/>
+        </mod:serveursICE>
+        <mod:codecVideo>VP8</mod:codecVideo>
+      </mod:configuration>
+    </mod:plugin>
+    <mod:plugin nom="repondeurAuto" active="true">
+      <mod:regles>
+        <mod:regle id="R1">
+          <mod:quand>rapport</mod:quand>
+          <mod:reponse>Je vérifie et reviens vers toi.</mod:reponse>
+          <mod:delai>2h</mod:delai>
+        </mod:regle>
+      </mod:regles>
+    </mod:plugin>
+  </mod:plugins>
+
+  <!-- 8. Bus d'événements -->
+  <evt:busEvenements>
+    <evt:canal nom="message.nouveau" gestionnaire="surNouveauMessage"/>
+    <evt:canal nom="utilisateur.connexion" gestionnaire="journalConnexion"/>
+  </evt:busEvenements>
+
+  <!-- 9. États CRDT -->
+  <crdt:documents>
+    <crdt:document id="docU100">
+      <crdt:type>RGA</crdt:type>
+      <crdt:etat>ETATBASE64…</crdt:etat>
+    </crdt:document>
+  </crdt:documents>
+
+  <!-- 10. Observabilité -->
+  <observabilite>
+    <metriques>
+      <metrique nom="messages_envoyes" type="compteur"/>
+      <metrique nom="sessions_actives" type="jauge"/>
+    </metriques>
+    <traces>
+      <endpointTrace>http://jaeger.local:14268/api/traces</endpointTrace>
+      <echantillonnage taux="0.1"/>
+    </traces>
+    <journalisation niveau="DEBUG" format="json"/>
+  </observabilite>
+
+  <!-- 11. Pipeline CI/CD -->
+  <pipeline>
+    <ci>
+      <etape nom="analyse" commande="npm run lint"/>
+      <etape nom="tests" commande="npm test"/>
+      <etape nom="construction" commande="npm run build"/>
+      <etape nom="package" commande="mvn package"/>
+    </ci>
+    <cd>
+      <deploiement environnement="production" strategie="blue-green"/>
+    </cd>
+  </pipeline>
+
+  <!-- 12. Configuration Système Globale -->
+  <configurationSysteme>
+    <infoAppli>
+      <nom>ChatXML Pro</nom>
+      <version>3.0</version>
+      <dateCompilation>2025-07-11</dateCompilation>
+    </infoAppli>
+    <performance>
+      <threadsMax>10</threadsMax>
+      <cache active="true" dureeVie="300s"/>
+      <niveauJournal>INFO</niveauJournal>
+    </performance>
+    <sauvegarde>
+      <planning quotidienne="02:00" incrementale="true"/>
+      <conservation jours="30"/>
+      <emplacement>/sauvegardes/</emplacement>
+      <chiffrementSauvegarde active="true"/>
+    </sauvegarde>
+    <conformite>
+      <rgpdCompliant>true</rgpdCompliant>
+      <traceAudit active="true"/>
+    </conformite>
+  </configurationSysteme>
+
+</appliChat>

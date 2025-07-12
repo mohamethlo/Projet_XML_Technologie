@@ -1,0 +1,277 @@
+<!-- Racine -->
+<!ELEMENT appliChat (cfg:environnements, utilisateurs, contacts, groupes, messages, notificationsRacine?, mod:plugins?, evt:busEvenements?, crdt:documents?, observabilite?, pipeline?, configurationSysteme)>
+<!ATTLIST appliChat
+    xmlns CDATA #FIXED "http://exemple.com/chat"
+    xmlns:cfg CDATA #FIXED "http://exemple.com/chat/config"
+    xmlns:mod CDATA #FIXED "http://exemple.com/chat/modules"
+    xmlns:evt CDATA #FIXED "http://exemple.com/chat/evenements"
+    xmlns:crdt CDATA #FIXED "http://exemple.com/chat/crdt"
+    version CDATA #REQUIRED
+    genereLe CDATA #REQUIRED>
+
+<!-- Environnements -->
+<!ELEMENT cfg:environnements (cfg:env+)>
+<!ELEMENT cfg:env (cfg:endpointAPI, cfg:flagsFonctionnalites)>
+<!ATTLIST cfg:env nom CDATA #REQUIRED>
+<!ELEMENT cfg:endpointAPI (#PCDATA)>
+<!ELEMENT cfg:flagsFonctionnalites (cfg:flag+)>
+<!ELEMENT cfg:flag EMPTY>
+<!ATTLIST cfg:flag nom CDATA #REQUIRED active (true|false) #REQUIRED>
+
+<!-- Utilisateurs -->
+<!ELEMENT utilisateurs (utilisateur+)>
+<!ELEMENT utilisateur (identifiants, profil, preferences, journalActivite?)>
+<!ATTLIST utilisateur id ID #REQUIRED cfg:env CDATA #IMPLIED>
+
+<!-- Identifiants -->
+<!ELEMENT identifiants (login, motDePasse, authentification2FA?)>
+<!ELEMENT login (#PCDATA)>
+<!ELEMENT motDePasse (#PCDATA)>
+<!ATTLIST motDePasse algoHash CDATA #REQUIRED>
+<!ELEMENT authentification2FA EMPTY>
+<!ATTLIST authentification2FA methode CDATA #REQUIRED active (true|false) #REQUIRED>
+
+<!-- Profil -->
+<!ELEMENT profil (nom, photo, bio?, languePreferee, languesDisponibles, fuseauHoraire, statut)>
+<!ELEMENT nom (#PCDATA)>
+<!ELEMENT photo (#PCDATA)>
+<!ELEMENT bio (#PCDATA)>
+<!ELEMENT languePreferee (#PCDATA)>
+<!ELEMENT languesDisponibles (langue+)>
+<!ELEMENT langue EMPTY>
+<!ATTLIST langue code CDATA #REQUIRED>
+<!ELEMENT fuseauHoraire (#PCDATA)>
+<!ELEMENT statut (#PCDATA)>
+<!ATTLIST statut derniereConnexion CDATA #REQUIRED>
+
+<!-- Préférences -->
+<!ELEMENT preferences (apparence, accessibilite, notifications, securite, stockage, connectivite, parametresIA)>
+<!ELEMENT apparence (theme, police, animations)>
+<!ELEMENT theme (#PCDATA)>
+<!ELEMENT police EMPTY>
+<!ATTLIST police taille CDATA #IMPLIED famille CDATA #IMPLIED>
+<!ELEMENT animations EMPTY>
+<!ATTLIST animations active (true|false) #REQUIRED>
+
+<!ELEMENT accessibilite (syntheseVocale, hautContraste, navigationClavier)>
+<!ELEMENT syntheseVocale EMPTY>
+<!ATTLIST syntheseVocale active (true|false) #REQUIRED>
+<!ELEMENT hautContraste EMPTY>
+<!ATTLIST hautContraste active (true|false) #REQUIRED>
+<!ELEMENT navigationClavier EMPTY>
+<!ATTLIST navigationClavier active (true|false) #REQUIRED>
+
+<!ELEMENT notifications (global, horaireSilence?, son?, vibration?, popup?)>
+<!ELEMENT global EMPTY>
+<!ATTLIST global active (true|false) #REQUIRED>
+<!ELEMENT horaireSilence EMPTY>
+<!ATTLIST horaireSilence debut CDATA #REQUIRED fin CDATA #REQUIRED>
+<!ELEMENT son EMPTY>
+<!ATTLIST son volume CDATA #IMPLIED>
+<!ELEMENT vibration EMPTY>
+<!ATTLIST vibration modele CDATA #IMPLIED>
+<!ELEMENT popup EMPTY>
+<!ATTLIST popup duree CDATA #IMPLIED active (true|false) #REQUIRED>
+
+<!ELEMENT securite (deconnexionAuto?, codePIN?, biometrie?, chiffrementLocal?)>
+<!ELEMENT deconnexionAuto EMPTY>
+<!ATTLIST deconnexionAuto delai CDATA #REQUIRED>
+<!ELEMENT codePIN EMPTY>
+<!ATTLIST codePIN 
+    longueur CDATA #REQUIRED
+    essaisMax CDATA #IMPLIED>
+<!ELEMENT biometrie EMPTY>
+<!ATTLIST biometrie active (true|false) #REQUIRED>
+<!ELEMENT chiffrementLocal EMPTY>
+<!ATTLIST chiffrementLocal 
+    algo CDATA #REQUIRED
+    active (true|false) #REQUIRED>
+
+<!ELEMENT stockage (limiteMo, nettoyageAuto?, compressionMedia?)>
+<!ELEMENT limiteMo (#PCDATA)>
+<!ELEMENT nettoyageAuto EMPTY>
+<!ATTLIST nettoyageAuto plusVieuxQue CDATA #REQUIRED>
+<!ELEMENT compressionMedia EMPTY>
+<!ATTLIST compressionMedia methode CDATA #REQUIRED>
+
+<!ELEMENT connectivite (modeHorsLigne?, reseauxPreferes, modeEconomieDonnees?)>
+<!ELEMENT modeHorsLigne EMPTY>
+<!ATTLIST modeHorsLigne 
+    active (true|false) #REQUIRED>
+<!ELEMENT reseauxPreferes (reseau+)>
+<!ELEMENT reseau EMPTY>
+<!ATTLIST reseau type CDATA #REQUIRED
+    priorite CDATA #REQUIRED>
+<!ELEMENT modeEconomieDonnees EMPTY>
+<!ATTLIST modeEconomieDonnees active (true|false) #REQUIRED>
+
+<!ELEMENT parametresIA (reponsesIntelligentes?, analyseSentiment?, traductionAuto?, reconnaissanceVocale?)>
+<!ELEMENT reponsesIntelligentes EMPTY>
+<!ATTLIST reponsesIntelligentes active (true|false) #REQUIRED>
+<!ELEMENT analyseSentiment EMPTY>
+<!ATTLIST analyseSentiment active (true|false) #REQUIRED>
+<!ELEMENT traductionAuto EMPTY>
+<!ATTLIST traductionAuto cible CDATA #REQUIRED active (true|false) #REQUIRED>
+<!ELEMENT reconnaissanceVocale EMPTY>
+<!ATTLIST reconnaissanceVocale accent CDATA #REQUIRED>
+
+<!-- Journal d'activité -->
+<!ELEMENT journalActivite (entree*)>
+<!ELEMENT entree EMPTY>
+<!ATTLIST entree horodatage CDATA #REQUIRED type CDATA #REQUIRED detail CDATA #IMPLIED message CDATA #IMPLIED>
+
+<!-- Contacts -->
+<!ELEMENT contacts (contact+)>
+<!ELEMENT contact EMPTY>
+<!ATTLIST contact id ID #REQUIRED utilisateur IDREF #REQUIRED avec IDREF #REQUIRED depuis CDATA #REQUIRED favori (true|false) #IMPLIED>
+
+<!-- Groupes -->
+<!ELEMENT groupes (groupe+)>
+<!ELEMENT groupe (meta, parametres, membres)>
+<!ATTLIST groupe id ID #REQUIRED>
+<!ELEMENT meta (nom, photo?, type, creePar, description)>
+<!ELEMENT creePar EMPTY>
+<!ATTLIST creePar utilisateur IDREF #REQUIRED date CDATA #REQUIRED>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT parametres (politiqueInvit?, retentionHistorique?, traductionAuto?, chiffrement?, tailleMaxMembres?, modeRapide?)>
+<!ELEMENT politiqueInvit EMPTY>
+<!ATTLIST politiqueInvit invitationsPar CDATA #REQUIRED>
+<!ELEMENT retentionHistorique EMPTY>
+<!ATTLIST retentionHistorique jours CDATA #REQUIRED>
+<!ELEMENT chiffrement EMPTY>
+<!ATTLIST chiffrement finAFin (true|false) #REQUIRED>
+<!ELEMENT tailleMaxMembres (#PCDATA)>
+<!ELEMENT modeRapide EMPTY>
+<!ATTLIST modeRapide intervalle CDATA #REQUIRED>
+<!ELEMENT membres (membre+)>
+<!ELEMENT membre EMPTY>
+<!ATTLIST membre utilisateur IDREF #REQUIRED role CDATA #REQUIRED rejoint CDATA #REQUIRED>
+
+<!-- Messages -->
+<!ELEMENT messages (message+)>
+<!ELEMENT message (contenu, options?, securiteMessage?, statistiques?, ameliorementsIA?)>
+<!ATTLIST message id ID #REQUIRED de IDREF #REQUIRED a IDREF #IMPLIED horodatage CDATA #REQUIRED statut CDATA #REQUIRED aGroupe IDREF #IMPLIED>
+<!ELEMENT contenu (texte?, formatage?, fichier?, audio?, transcription*)>
+<!ATTLIST contenu type (texte|fichier|audio|video) #REQUIRED>
+<!ELEMENT texte (#PCDATA)>
+<!ELEMENT formatage EMPTY>
+<!ATTLIST formatage gras (true|false) #IMPLIED italique (true|false) #IMPLIED>
+<!ELEMENT fichier EMPTY>
+<!ATTLIST fichier nom CDATA #REQUIRED mime CDATA #REQUIRED tailleKo CDATA #REQUIRED>
+<!ELEMENT audio EMPTY>
+<!ATTLIST audio source CDATA #REQUIRED duree CDATA #REQUIRED>
+<!ELEMENT video EMPTY>
+<!ATTLIST video source CDATA #REQUIRED duree CDATA #REQUIRED>
+<!ELEMENT transcription (#PCDATA)>
+<!ATTLIST transcription lang CDATA #REQUIRED>
+
+<!ELEMENT options (priorite?, ephemere?, accuseLecture?, reactionsPossible?, transfert?, analyseVirus?, ouvertureAutoInvite?)>
+<!ELEMENT priorite EMPTY>
+<!ATTLIST priorite niveau CDATA #REQUIRED>
+<!ELEMENT ephemere EMPTY>
+<!ATTLIST ephemere duree CDATA #REQUIRED>
+<!ELEMENT accuseLecture EMPTY>
+<!ATTLIST accuseLecture demande (true|false) #REQUIRED>
+<!ELEMENT reactionsPossible EMPTY>
+<!ATTLIST reactionsPossible types CDATA #REQUIRED>
+<!ELEMENT transfert EMPTY>
+<!ATTLIST transfert autorise (true|false) #REQUIRED>
+<!ELEMENT analyseVirus EMPTY>
+<!ATTLIST analyseVirus effectue (true|false) #REQUIRED resultat CDATA #REQUIRED>
+<!ELEMENT ouvertureAutoInvite EMPTY>
+<!ATTLIST ouvertureAutoInvite active (true|false) #REQUIRED>
+
+<!ELEMENT securiteMessage (filigrane?, signature?)>
+<!ELEMENT filigrane EMPTY>
+<!ATTLIST filigrane actif (true|false) #REQUIRED>
+<!ELEMENT signature (#PCDATA)>
+<!ATTLIST signature algo CDATA #REQUIRED>
+
+<!ELEMENT statistiques (telechargements?)>
+<!ELEMENT telechargements (#PCDATA)>
+
+<!ELEMENT ameliorementsIA (reductionBruit?, emotionDetectee?)>
+<!ELEMENT reductionBruit EMPTY>
+<!ATTLIST reductionBruit appliquee (true|false) #REQUIRED>
+<!ELEMENT emotionDetectee (#PCDATA)>
+
+<!-- Notifications (niveau racine) -->
+<!ELEMENT notificationsRacine (notification+)>
+<!ELEMENT notification (contenuNotification, action)>
+<!ATTLIST notification id ID #REQUIRED pour IDREF #REQUIRED declencheur IDREF #REQUIRED type CDATA #REQUIRED date CDATA #REQUIRED lue (true|false) #REQUIRED>
+<!ELEMENT contenuNotification (#PCDATA)>
+<!ELEMENT action EMPTY>
+<!ATTLIST action onClick CDATA #REQUIRED>
+
+<!-- Plugins -->
+<!ELEMENT mod:plugins (mod:plugin+)>
+<!ELEMENT mod:plugin (mod:configuration?, mod:regles?)>
+<!ATTLIST mod:plugin nom CDATA #REQUIRED active (true|false) #REQUIRED>
+<!ELEMENT mod:configuration (mod:serveursICE?, mod:codecVideo?)>
+<!ELEMENT mod:serveursICE (mod:serveur+)>
+<!ELEMENT mod:serveur EMPTY>
+<!ATTLIST mod:serveur url CDATA #REQUIRED utilisateur CDATA #IMPLIED motDePasse CDATA #IMPLIED>
+<!ELEMENT mod:codecVideo (#PCDATA)>
+<!ELEMENT mod:regles (mod:regle+)>
+<!ELEMENT mod:regle (mod:quand, mod:reponse, mod:delai)>
+<!ATTLIST mod:regle id ID #REQUIRED>
+<!ELEMENT mod:quand (#PCDATA)>
+<!ELEMENT mod:reponse (#PCDATA)>
+<!ELEMENT mod:delai (#PCDATA)>
+
+<!-- Bus d'événements -->
+<!ELEMENT evt:busEvenements (evt:canal+)>
+<!ELEMENT evt:canal EMPTY>
+<!ATTLIST evt:canal nom CDATA #REQUIRED gestionnaire CDATA #REQUIRED>
+
+<!-- CRDT -->
+<!ELEMENT crdt:documents (crdt:document+)>
+<!ELEMENT crdt:document (crdt:type, crdt:etat)>
+<!ATTLIST crdt:document id ID #REQUIRED>
+<!ELEMENT crdt:type (#PCDATA)>
+<!ELEMENT crdt:etat (#PCDATA)>
+
+<!-- Observabilité -->
+<!ELEMENT observabilite (metriques?, traces?, journalisation?)>
+<!ELEMENT metriques (metrique+)>
+<!ELEMENT metrique EMPTY>
+<!ATTLIST metrique nom CDATA #REQUIRED type (compteur|jauge) #REQUIRED>
+<!ELEMENT traces (endpointTrace, echantillonnage)>
+<!ELEMENT endpointTrace (#PCDATA)>
+<!ELEMENT echantillonnage EMPTY>
+<!ATTLIST echantillonnage taux CDATA #REQUIRED>
+<!ELEMENT journalisation EMPTY>
+<!ATTLIST journalisation niveau CDATA #REQUIRED format CDATA #REQUIRED>
+
+<!-- Pipeline -->
+<!ELEMENT pipeline (ci, cd)>
+<!ELEMENT ci (etape+)>
+<!ELEMENT etape EMPTY>
+<!ATTLIST etape nom CDATA #REQUIRED commande CDATA #REQUIRED>
+<!ELEMENT cd (deploiement)>
+<!ELEMENT deploiement EMPTY>
+<!ATTLIST deploiement environnement CDATA #REQUIRED strategie CDATA #REQUIRED>
+
+<!-- Config système -->
+<!ELEMENT configurationSysteme (infoAppli, performance, sauvegarde, conformite)>
+<!ELEMENT infoAppli (nom, version, dateCompilation)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT dateCompilation (#PCDATA)>
+<!ELEMENT performance (threadsMax, cache, niveauJournal)>
+<!ELEMENT threadsMax (#PCDATA)>
+<!ELEMENT cache EMPTY>
+<!ATTLIST cache active (true|false) #REQUIRED dureeVie CDATA #REQUIRED>
+<!ELEMENT niveauJournal (#PCDATA)>
+<!ELEMENT sauvegarde (planning, conservation, emplacement, chiffrementSauvegarde)>
+<!ELEMENT planning EMPTY>
+<!ATTLIST planning quotidienne CDATA #REQUIRED incrementale (true|false) #REQUIRED>
+<!ELEMENT conservation EMPTY>
+<!ATTLIST conservation jours CDATA #REQUIRED>
+<!ELEMENT emplacement (#PCDATA)>
+<!ELEMENT chiffrementSauvegarde EMPTY>
+<!ATTLIST chiffrementSauvegarde active (true|false) #REQUIRED>
+<!ELEMENT conformite (rgpdCompliant, traceAudit)>
+<!ELEMENT rgpdCompliant (#PCDATA)>
+<!ELEMENT traceAudit EMPTY>
+<!ATTLIST traceAudit active (true|false) #REQUIRED>
