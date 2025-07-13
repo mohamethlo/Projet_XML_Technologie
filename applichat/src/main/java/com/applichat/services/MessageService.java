@@ -5,7 +5,8 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
-public class MessageService {
+public class MessageService 
+{
 
     private final MessageDAO messageDAO;
 
@@ -39,5 +40,10 @@ public class MessageService {
     {
         return messageDAO.getMessagesParUtilisateur(utilisateurId);
     }
+
+    public Element getMessageById(String id) {
+        return messageDAO.getMessageById(id);
+    }
+
 }
 
